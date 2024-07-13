@@ -2,194 +2,189 @@
 
 const int X = 0;
 const int Y = 1;
-int x_pozicio;
-int y_pozicio;
+int x_position; //Joysticks positon in the x axis
+int y_position;
 
 int DIN = 10;
 int CS = 12;
 int CLK = 11;
-int x_fej;
-int y_fej;
+int x_head; // The head of the snake
+int y_head;
 
-const int gomb = 50;
+const int button = 50;
 
 LedControl lc = LedControl(DIN, CLK, CS, 0);
 
-int kor = 0;
+int rounds = 0;
 
-int hossz = 2;
-int irany = 1;
+int lenght = 2;
+int direction = 1;
 //                   x, y
-int kigyo[64][2] = {{1, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}};
+int snake[64][2] = {{1, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}};
+// The cordinates of the pieces of the snake
 
-int x_alma = random(8);
-int y_alma = random(8);
+int x_apple = random(8); // the position of the apple
+int y_apple = random(8);
 
 void setup() {
-  // put your setup code here, to run once:
-  pinMode(gomb, INPUT);
+
+  pinMode(button, INPUT);
 
 
   lc.shutdown(0, false);
   lc.setIntensity(0, 3);
   lc.clearDisplay(0);
 
-  x_fej = 1;
-  y_fej = 0;
+  x_head = 1;
+  y_head = 0;
 
-  //lc.setLed(0, y_fej, x_fej, true);
+  //lc.setLed(0, y_head, x_head, true);
 
 }
 
 void loop() {
-  x_pozicio = analogRead(X);
-  y_pozicio = analogRead(Y);
+  x_position = analogRead(X);
+  y_position = analogRead(Y);
 
 
   /*
+  Sets the direction the joystick is turned
+
       0
     3   1
       2
   */
-
-  if (x_pozicio < 200 && irany != 1) {
-    //x_fej -= 1;
-    irany = 3;
+  if (x_position < 200 && direction != 1) {
+    direction = 3;
   }
-  else if (x_pozicio > 823 && irany != 3) {
-    //x_fej += 1;
-    irany = 1;
+  else if (x_position > 823 && direction != 3) {
+    direction = 1;
   }
-  else if (y_pozicio < 200 && irany != 0) {
-    //y_fej -= 1;
-    irany = 2;
+  else if (y_position < 200 && direction != 0) {
+    direction = 2;
   }
-  else if (y_pozicio > 823 && irany != 2) {
-    //y_fej += 1;
-    irany = 0;
+  else if (y_position > 823 && direction != 2) {
+    direction = 0;
   }
 
-  switch (irany) {
+  // Moves the snakekes head to the direction
+  switch (direction) {
     case 0:
-      if (y_fej >= 7) {
-        y_fej = 0;
+      if (y_head >= 7) {
+        y_head = 0;
       }
       else {
-        y_fej += 1;
+        y_head += 1;
       }
       break;
 
     case 1:
-      if (x_fej >= 7) {
-        x_fej = 0;
+      if (x_head >= 7) {
+        x_head = 0;
       }
       else {
-        x_fej += 1;
+        x_head += 1;
       }
       break;
 
     case 2:
-      if (y_fej <= 0) {
-        y_fej = 7;
+      if (y_head <= 0) {
+        y_head = 7;
       }
       else {
-        y_fej -= 1;
+        y_head -= 1;
       }
       break;
 
     case 3:
-      if (x_fej <= 0) {
-        x_fej = 7;
+      if (x_head <= 0) {
+        x_head = 7;
       }
       else {
-        x_fej -= 1;
+        x_head -= 1;
       }
       break;
-
   }
 
-  if (x_fej == x_alma && y_fej == y_alma) {
-    lc.setLed(0, y_alma, x_alma, false);
-    //hossz+=1;
+  // checks if the sanke touches the apple 
+  if (x_head == x_apple && y_head == y_apple) {
+    lc.setLed(0, y_apple, x_apple, false);
 
+    // Its generates cordinates until the apple is not where the snake is
     bool valid = false;
     while (valid == false) {
-      x_alma = random(8);
-      y_alma = random(8);
+      x_apple = random(8);
+      y_apple = random(8);
 
-      for (int resz = 0; resz < hossz; resz++) {
-        if (kigyo[resz][0] == x_alma && kigyo[resz][1] == y_alma) {
+      //checks every piece of the snake if its where the apple is
+      for (int piece = 0; piece < lenght; piece++) {
+        if (snake[piece][0] == x_apple && snake[piece][1] == y_apple) {
           break;
         }
-        if (resz == hossz-1) {
+        // if the for loop is over then it is a valid location for the apple
+        if (piece == lenght-1) {
           valid = true;
-          hossz += 1;
+          lenght += 1;
           break;
         }
       }
     }
   }
+  // The snake grows
   else{
-    lc.setLed(0, kigyo[hossz-1][1], kigyo[hossz-1][0], false);
+    lc.setLed(0, snake[lenght-1][1], snake[lenght-1][0], false);
   }
 
-  for (int resz = 1; resz < hossz; resz++) {
-    kigyo[hossz-resz][0] = kigyo[hossz-resz-1][0];
-    kigyo[hossz-resz][1] = kigyo[hossz-resz-1][1];
+  // moves forvard the snake
+  for (int piece = 1; piece < lenght; piece++) {
+    snake[lenght-piece][0] = snake[lenght-piece-1][0];
+    snake[lenght-piece][1] = snake[lenght-piece-1][1];
   }
-  kigyo[0][0] = x_fej;
-  kigyo[0][1] = y_fej;
+  snake[0][0] = x_head;
+  snake[0][1] = y_head;
 
-  for (int resz = 1; resz < hossz; resz++) {
-    if (kigyo[0][0] == kigyo[resz][0] && kigyo[0][1] == kigyo[resz][1] && kor != 0) {
-
-      Serial.println(resz);
-
-      Serial.print(kigyo[0][0]);
-      Serial.print("   X   ");
-      Serial.println(kigyo[resz][0]);
-      Serial.print(kigyo[0][1]);
-      Serial.print("   Y   ");
-      Serial.println(kigyo[resz][1]);
-
-      
+  // checks if the snake collided with itself
+  for (int piece = 1; piece < lenght; piece++) {
+    if (snake[0][0] == snake[piece][0] && snake[0][1] == snake[piece][1] && rounds != 0) {
       lc.clearDisplay(0);
       game_over();
 
-      while (digitalRead(gomb) == LOW){
+      while (digitalRead(button) == LOW){
         delay(50);
       }
-      hossz = 2;
-      kor = 0;
-      irany = 1;
-      kigyo[0][0] = 1;
-      kigyo[0][1] = 0;
-      x_fej = 1;
-      y_fej = 0;
-      kigyo[1][0] = 0;
-      kigyo[1][1] = 0;
+      lenght = 2;
+      rounds = 0;
+      direction = 1;
+      snake[0][0] = 1;
+      snake[0][1] = 0;
+      x_head = 1;
+      y_head = 0;
+      snake[1][0] = 0;
+      snake[1][1] = 0;
       lc.clearDisplay(0);
       break;
     }
   }
 
-  for (int resz = 0; resz < hossz; resz++) {
-    lc.setLed(0, kigyo[resz][1], kigyo[resz][0], true);
+  // turns every piece of the snake on
+  for (int piece = 0; piece < lenght; piece++) {
+    lc.setLed(0, snake[piece][1], snake[piece][0], true);
   }
 
-  if (kor % 2 == 0) {
-    lc.setLed(0, y_alma, x_alma, true);
+  // Turns the apple led on-of every round to distinguishes the snake from the apple
+  if (rounds % 2 == 0) {
+    lc.setLed(0, y_apple, x_apple, true);
   }
   else {
-    lc.setLed(0, y_alma, x_alma, false);
+    lc.setLed(0, y_apple, x_apple, false);
   }
 
-  kor +=1;
+  rounds +=1;
   //delay(175);
   delay(300);
 }
 
-
+// this animation is played when the game is over
 void game_over() {
   lc.clearDisplay(9);
 
